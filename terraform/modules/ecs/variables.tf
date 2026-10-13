@@ -57,20 +57,3 @@ variable "backend_target_group_arn" {
   description = "ARN of the backend ALB target group"
   type        = string
 }
-
-variable "min_capacity" {
-  description = "Minimum number of ECS tasks for auto-scaling"
-  type        = number
-  default     = 1
-}
-
-variable "max_capacity" {
-  description = "Maximum number of ECS tasks for auto-scaling"
-  type        = number
-  default     = 3
-}
-
-variable "sns_topic_arn" {
-  description = "ARN of the SNS topic for CloudWatch alarm notifications"
-  type        = string
-}

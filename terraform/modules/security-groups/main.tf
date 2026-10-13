@@ -34,8 +34,8 @@ resource "aws_security_group" "frontend" {
 
   ingress {
     description     = "Allow traffic from ALB"
-    from_port       = 3000
-    to_port         = 3000
+    from_port       = 80
+    to_port         = 80
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }

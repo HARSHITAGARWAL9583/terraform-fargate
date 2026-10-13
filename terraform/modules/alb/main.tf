@@ -19,28 +19,31 @@ resource "aws_lb" "main" {
 
 
 resource "aws_lb_target_group" "frontend" {
-  name = "${var.project_name}-${var.environment}-frontend"
-  port = 3000 //frontend container listens on 3000
-  protocol = "HTTP"
-  target_type = "ip" //ALB check whether the frontend  is heathy
-  vpc_id = var.vpc_id
+  name_prefix = "fe-"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
 
+  lifecycle {
+    create_before_destroy = true
+  }
 
-  health_check { //ALB check whether the frontend is healthy
-    enabled = true
-    path = "/" //ALB calls ? to test it
-    protocol = "HTTP"
-    port = "traffic-port" // health check users the target grp port
-    healthy_threshold = 2
+  health_check {
+    enabled             = true
+    path                = "/"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval = 30
-    timeout = 5
+    interval            = 30
+    timeout             = 5
   }
 
   tags = {
-    Name = "${var.project_name}-${var.environment}-frontend"
-    Environment =  var.environment
-    ManagedBy = "terraform"
+    Name        = "${var.project_name}-${var.environment}-frontend"
+    Environment = var.environment
+    ManagedBy   = "terraform"
     Application = "frontend"
   }
 }

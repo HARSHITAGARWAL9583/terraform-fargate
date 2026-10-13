@@ -50,14 +50,23 @@ module "ecr" {
   environment  = var.environment
 }
 
-# Monitoring must be created before ECS so the SNS ARN is available
-module "monitoring" {
-  source = "./terraform/modules/monitoring"
+module "sns" {
+  source = "./terraform/modules/sns"
 
   project_name       = var.project_name
   environment        = var.environment
   notification_email = var.notification_email
 }
+
+module "acm" {
+  source = "./terraform/modules/acm"
+
+  project_name              = var.project_name
+  environment               = var.environment
+  domain_name               = var.domain_name
+  subject_alternative_names = ["www.${var.domain_name}"]
+}
+
 
 module "alb" {
   source = "./terraform/modules/alb"
@@ -96,10 +105,28 @@ module "ecs" {
   frontend_target_group_arn = module.alb.frontend_target_group_arn
   backend_target_group_arn  = module.alb.backend_target_group_arn
 
-  # Auto-scaling
+}
+
+module "autoscaling" {
+  source = "./terraform/modules/autoscaling"
+
+  project_name          = var.project_name
+  environment           = var.environment
+  ecs_cluster_name      = module.ecs.cluster_name
+  frontend_service_name = module.ecs.frontend_service_name
+  backend_service_name  = module.ecs.backend_service_name
+
   min_capacity = 1
   max_capacity = 3
+}
 
-  # Monitoring
-  sns_topic_arn = module.monitoring.sns_topic_arn
+module "cloudwatch" {
+  source = "./terraform/modules/cloudwatch"
+
+  project_name          = var.project_name
+  environment           = var.environment
+  ecs_cluster_name      = module.ecs.cluster_name
+  frontend_service_name = module.ecs.frontend_service_name
+  backend_service_name  = module.ecs.backend_service_name
+  sns_topic_arn         = module.sns.sns_topic_arn
 }

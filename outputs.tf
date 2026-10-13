@@ -45,5 +45,19 @@ output "ecs_cluster_name" {
 
 output "sns_topic_arn" {
   description = "ARN of the SNS alerts topic"
-  value       = module.monitoring.sns_topic_arn
+  value       = module.sns.sns_topic_arn
 }
+
+# ─── SSL / ACM ────────────────────────────────────────────────────────────────
+
+output "acm_certificate_arn" {
+  description = "ARN of the ACM certificate"
+  value       = module.acm.certificate_arn
+}
+
+output "acm_dns_validation_records" {
+  description = "CNAME records to add into Hostinger DNS for SSL validation"
+  value       = module.acm.dns_validation_records
+}
+
+

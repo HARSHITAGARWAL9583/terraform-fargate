@@ -1,5 +1,5 @@
 variable "aws_region" {
-  description = "AWS region to deploy resources into"
+  description = "AWS region to deploy resources "
   type        = string
   default     = "ap-south-1"
 }
@@ -21,3 +21,10 @@ variable "notification_email" {
   type        = string
   default     = "harshit.a@moondviec.co"
 }
+
+variable "domain_name" {
+  description = "Primary domain name for ACM SSL certificate"
+  type        = string
+  default     = "superarea.ai"
+}
+
