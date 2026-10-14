@@ -3,11 +3,6 @@ variable "project_name" {
   type        = string
 }
 
-variable "environment" {
-  description = "Environment name"
-  type        = string
-}
-
 variable "domain_name" {
   description = "Primary domain name (e.g. superarea.ai)"
   type        = string

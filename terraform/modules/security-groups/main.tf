@@ -20,10 +20,7 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name        = "${var.project_name}-alb-sg"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Tier        = "alb"
+    Name = "${var.project_name}-alb-sg"
   }
 }
 
@@ -34,8 +31,8 @@ resource "aws_security_group" "frontend" {
 
   ingress {
     description     = "Allow traffic from ALB"
-    from_port       = 80
-    to_port         = 80
+    from_port       = 3000
+    to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
@@ -49,10 +46,7 @@ resource "aws_security_group" "frontend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-frontend-sg"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Tier        = "frontend"
+    Name = "${var.project_name}-frontend-sg"
   }
 }
 
@@ -63,16 +57,16 @@ resource "aws_security_group" "backend" {
 
   ingress {
     description     = "Allow traffic from ALB on /api/* routes"
-    from_port       = 5000
-    to_port         = 5000
+    from_port       = 1951
+    to_port         = 1951
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
 
   ingress {
     description     = "Allow traffic from frontend ECS service"
-    from_port       = 5000
-    to_port         = 5000
+    from_port       = 1951
+    to_port         = 1951
     protocol        = "tcp"
     security_groups = [aws_security_group.frontend.id]
   }
@@ -86,9 +80,6 @@ resource "aws_security_group" "backend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-backend-sg"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Tier        = "backend"
+    Name = "${var.project_name}-backend-sg"
   }
 }

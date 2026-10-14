@@ -1,10 +1,8 @@
 resource "aws_sns_topic" "alerts" {
-  name = "${var.project_name}-${var.environment}-alerts"
+  name = "${var.project_name}-alerts"
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-alerts"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-alerts"
   }
 }
 

@@ -1,24 +1,18 @@
 resource "aws_ecs_cluster" "main" {
-  name = "${var.project_name}-${var.environment}-cluster"
-
+  name = "${var.project_name}-cluster"
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-cluster"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-
+    Name = "${var.project_name}-cluster"
   }
 }
 
-
-
 resource "aws_ecs_task_definition" "frontend" {
-  family                   = "${var.project_name}-${var.environment}-frontend"
+  family                   = "${var.project_name}-frontend"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "256"
-  memory = "512"
+  cpu    = "512"
+  memory = "1024"
 
   execution_role_arn = var.ecs_task_execution_role_arn
   task_role_arn      = var.ecs_task_role_arn
@@ -31,7 +25,7 @@ resource "aws_ecs_task_definition" "frontend" {
 
       portMappings = [
         {
-          containerPort = 80
+          containerPort = 3000
           protocol      = "tcp"
         }
       ]
@@ -40,7 +34,7 @@ resource "aws_ecs_task_definition" "frontend" {
         logDriver = "awslogs"
 
         options = {
-          "awslogs-group"         = "/ecs/${var.project_name}/${var.environment}/frontend"
+          "awslogs-group"         = "/ecs/${var.project_name}/frontend"
           "awslogs-region"        = "ap-south-1"
           "awslogs-stream-prefix" = "ecs"
         }
@@ -48,25 +42,20 @@ resource "aws_ecs_task_definition" "frontend" {
     }
   ])
 
-  # Log group must exist before the task definition is registered
   depends_on = [aws_cloudwatch_log_group.frontend]
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-frontend"
   }
 }
 
-
-
 resource "aws_ecs_task_definition" "backend" {
-  family                   = "${var.project_name}-${var.environment}-backend"
+  family                   = "${var.project_name}-backend"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-  cpu    = "256"
-  memory = "512"
+  cpu    = "512"
+  memory = "1024"
 
   execution_role_arn = var.ecs_task_execution_role_arn
   task_role_arn      = var.ecs_task_role_arn
@@ -79,8 +68,19 @@ resource "aws_ecs_task_definition" "backend" {
 
       portMappings = [
         {
-          containerPort = 5000
+          containerPort = 1951
           protocol      = "tcp"
+        }
+      ]
+
+      environment = [
+        {
+          name  = "PORT"
+          value = "1951"
+        },
+        {
+          name  = "NODE_ENV"
+          value = "production"
         }
       ]
 
@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "backend" {
         logDriver = "awslogs"
 
         options = {
-          "awslogs-group"         = "/ecs/${var.project_name}/${var.environment}/backend"
+          "awslogs-group"         = "/ecs/${var.project_name}/backend"
           "awslogs-region"        = "ap-south-1"
           "awslogs-stream-prefix" = "ecs"
         }
@@ -96,46 +96,33 @@ resource "aws_ecs_task_definition" "backend" {
     }
   ])
 
-  # Log group must exist before the task definition is registered
   depends_on = [aws_cloudwatch_log_group.backend]
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-backend-task"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-backend-task"
   }
 }
-
 
 resource "aws_cloudwatch_log_group" "frontend" {
-  name              = "/ecs/${var.project_name}/${var.environment}/frontend"
+  name              = "/ecs/${var.project_name}/frontend"
   retention_in_days = 30
 
-
-
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-frontend-logs"
   }
 }
-
 
 resource "aws_cloudwatch_log_group" "backend" {
-  name              = "/ecs/${var.project_name}/${var.environment}/backend"
+  name              = "/ecs/${var.project_name}/backend"
   retention_in_days = 30
 
-
   tags = {
-    Name        = "${var.project_name}-${var.environment}-backend-logs"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-backend-logs"
   }
 }
 
-
 resource "aws_ecs_service" "frontend" {
-  name            = "${var.project_name}-${var.environment}-frontend"
+  name            = "${var.project_name}-frontend"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.frontend.arn
 
@@ -151,18 +138,16 @@ resource "aws_ecs_service" "frontend" {
   load_balancer {
     target_group_arn = var.frontend_target_group_arn
     container_name   = "frontend"
-    container_port   = 80
+    container_port   = 3000
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend-service"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-frontend-service"
   }
 }
 
 resource "aws_ecs_service" "backend" {
-  name            = "${var.project_name}-${var.environment}-backend"
+  name            = "${var.project_name}-backend"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.backend.arn
 
@@ -178,12 +163,10 @@ resource "aws_ecs_service" "backend" {
   load_balancer {
     target_group_arn = var.backend_target_group_arn
     container_name   = "backend"
-    container_port   = 5000
+    container_port   = 1951
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-backend-service"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-backend-service"
   }
 }

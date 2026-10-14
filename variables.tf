@@ -1,5 +1,5 @@
 variable "aws_region" {
-  description = "AWS region to deploy resources "
+  description = "AWS region to deploy resources"
   type        = string
   default     = "ap-south-1"
 }
@@ -7,13 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name used as a prefix for all resources"
   type        = string
-  default     = "myapp"
-}
-
-variable "environment" {
-  description = "Deployment environment (e.g. terraform-dev, staging, prod)"
-  type        = string
-  default     = "terraform-dev"
+  default     = "superarea"
 }
 
 variable "notification_email" {
@@ -27,4 +21,3 @@ variable "domain_name" {
   type        = string
   default     = "superarea.ai"
 }
-

@@ -43,9 +43,10 @@ This document describes the technical design for the AWS ECS Fargate infrastruct
 
 | Resource | Config |
 |----------|--------|
-| VPC | CIDR: `10.10.0.0/16` |
-| Public Subnets | `10.10.1.0/24`, `10.10.2.0/24` (ap-south-1a, 1b) |
-| Private Subnets | `10.10.3.0/24`, `10.10.4.0/24` (ap-south-1a, 1b) |
+| VPC | CIDR: `10.0.0.0/16` |
+| Public Subnets | `10.0.1.0/24`, `10.0.2.0/24` (ap-south-1a, 1b) |
+| Private Subnets | `10.0.3.0/24`, `10.0.4.0/24` (ap-south-1a, 1b) |
+
 | Internet Gateway | Attached to VPC |
 | Public Route Table | `0.0.0.0/0` → IGW |
 
@@ -59,13 +60,15 @@ This document describes the technical design for the AWS ECS Fargate infrastruct
 
 | Resource | Config |
 |----------|--------|
-| Elastic IP | Allocated for NAT Gateway |
-| NAT Gateway | Placed in `public_subnet[0]` |
-| Private Route Table | `0.0.0.0/0` → NAT Gateway |
+| Elastic IP | Allocated for NAT Instance |
+| NAT Instance | `t3.micro` EC2 in `public_subnet[0]`, AL2023 with auto-interface iptables masquerading |
+| Security Group | Ingress from private subnets, egress to `0.0.0.0/0` |
+| Private Route Table | `0.0.0.0/0` → NAT Instance ENI |
 
 **Key decisions:**
-- Uses **AWS Managed NAT Gateway** (not EC2 NAT instance) for reliability
-- Single NAT Gateway in one AZ (cost optimized for dev)
+- Uses **Production-hardened EC2 NAT Instance** to optimize client cost (~$3/mo vs ~$32/mo NAT Gateway)
+- `source_dest_check = false` enables packet routing
+- Dynamic network interface detection in `user_data` ensures boot persistence and reliability
 - Route table associated with both private subnets
 
 ---
@@ -163,7 +166,7 @@ Developer
 
 | Decision | Rationale |
 |----------|-----------|
-| Managed NAT Gateway over EC2 NAT | EC2 NAT requires manual iptables setup which is unreliable on AL2023 |
+| Cost-optimized EC2 NAT Instance | Saves ~$30/month for client while dynamic interface script provides production stability |
 | ECS Fargate over EC2 | No server management, scales per task |
 | Private subnets for ECS | Security — containers not directly exposed |
 | ALB path-based routing | Single URL for both frontend and backend |

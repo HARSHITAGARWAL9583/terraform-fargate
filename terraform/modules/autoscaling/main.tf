@@ -9,7 +9,7 @@ resource "aws_appautoscaling_target" "frontend" {
 }
 
 resource "aws_appautoscaling_policy" "frontend_cpu" {
-  name               = "${var.project_name}-${var.environment}-frontend-cpu"
+  name               = "${var.project_name}-frontend-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.frontend.resource_id
   scalable_dimension = aws_appautoscaling_target.frontend.scalable_dimension
@@ -35,7 +35,7 @@ resource "aws_appautoscaling_target" "backend" {
 }
 
 resource "aws_appautoscaling_policy" "backend_cpu" {
-  name               = "${var.project_name}-${var.environment}-backend-cpu"
+  name               = "${var.project_name}-backend-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.backend.resource_id
   scalable_dimension = aws_appautoscaling_target.backend.scalable_dimension

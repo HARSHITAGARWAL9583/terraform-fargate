@@ -3,11 +3,6 @@ variable "project_name" {
   type        = string
 }
 
-variable "environment" {
-  description = "Environment name"
-  type        = string
-}
-
 variable "ecs_cluster_name" {
   description = "ECS cluster name"
   type        = string

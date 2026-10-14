@@ -1,36 +1,27 @@
 resource "aws_ecr_repository" "frontend" {
-  name                 = "${var.project_name}-${var.environment}-frontend"
+  name                 = "${var.project_name}-frontend"
   image_tag_mutability = "MUTABLE"
-
 
   image_scanning_configuration {
     scan_on_push = true
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name        = "${var.project_name}-frontend"
     Application = "frontend"
   }
 }
 
-
 resource "aws_ecr_repository" "backend" {
-  name                 = "${var.project_name}-${var.environment}-backend"
-  image_tag_mutability = "MUTABLE" //prevents accidentally overwriting an existing image tag.
-
-
+  name                 = "${var.project_name}-backend"
+  image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
-    scan_on_push = true //scans images for vulnerabilities when pushed.
+    scan_on_push = true
   }
 
-
-  tags= {
-    Name = "${var.project_name}-${var.environment}-backend"
-    Environment = var.environment
-    ManagedBy = "terraform"
-    Application  = "backend"
+  tags = {
+    Name        = "${var.project_name}-backend"
+    Application = "backend"
   }
 }

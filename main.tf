@@ -1,20 +1,19 @@
 module "vpc" {
   source       = "./terraform/modules/vpc"
-  vpc_cidr     = "10.10.0.0/16" //yaha per define kar diya hai
+  vpc_cidr     = "10.0.0.0/16"
   project_name = var.project_name
-  environment  = var.environment
 
   availability_zones = [
     "ap-south-1a",
     "ap-south-1b",
   ]
   public_subnet_cidrs = [
-    "10.10.1.0/24",
-    "10.10.2.0/24",
+    "10.0.1.0/24",
+    "10.0.2.0/24",
   ]
   private_subnet_cidrs = [
-    "10.10.3.0/24",
-    "10.10.4.0/24",
+    "10.0.3.0/24",
+    "10.0.4.0/24",
   ]
 }
 
@@ -27,7 +26,6 @@ module "nat" {
   private_subnet_cidrs = module.vpc.private_subnet_cidrs
 
   project_name = var.project_name
-  environment  = var.environment
 }
 
 module "security_groups" {
@@ -35,26 +33,22 @@ module "security_groups" {
 
   vpc_id       = module.vpc.vpc_id
   project_name = var.project_name
-  environment  = var.environment
 }
 
 module "iam" {
   source       = "./terraform/modules/iam"
   project_name = var.project_name
-  environment  = var.environment
 }
 
 module "ecr" {
   source       = "./terraform/modules/ecr"
   project_name = var.project_name
-  environment  = var.environment
 }
 
 module "sns" {
   source = "./terraform/modules/sns"
 
   project_name       = var.project_name
-  environment        = var.environment
   notification_email = var.notification_email
 }
 
@@ -62,11 +56,9 @@ module "acm" {
   source = "./terraform/modules/acm"
 
   project_name              = var.project_name
-  environment               = var.environment
   domain_name               = var.domain_name
   subject_alternative_names = ["www.${var.domain_name}"]
 }
-
 
 module "alb" {
   source = "./terraform/modules/alb"
@@ -76,14 +68,12 @@ module "alb" {
   security_group_id = module.security_groups.alb_security_group_id
 
   project_name = var.project_name
-  environment  = var.environment
 }
 
 module "ecs" {
   source = "./terraform/modules/ecs"
 
   project_name = var.project_name
-  environment  = var.environment
 
   # Networking
   vpc_id             = module.vpc.vpc_id
@@ -104,14 +94,12 @@ module "ecs" {
   # ALB target groups
   frontend_target_group_arn = module.alb.frontend_target_group_arn
   backend_target_group_arn  = module.alb.backend_target_group_arn
-
 }
 
 module "autoscaling" {
   source = "./terraform/modules/autoscaling"
 
   project_name          = var.project_name
-  environment           = var.environment
   ecs_cluster_name      = module.ecs.cluster_name
   frontend_service_name = module.ecs.frontend_service_name
   backend_service_name  = module.ecs.backend_service_name
@@ -124,7 +112,6 @@ module "cloudwatch" {
   source = "./terraform/modules/cloudwatch"
 
   project_name          = var.project_name
-  environment           = var.environment
   ecs_cluster_name      = module.ecs.cluster_name
   frontend_service_name = module.ecs.frontend_service_name
   backend_service_name  = module.ecs.backend_service_name

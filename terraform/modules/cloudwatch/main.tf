@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "frontend_cpu_high" {
-  alarm_name          = "${var.project_name}-${var.environment}-frontend-cpu-high"
+  alarm_name          = "${var.project_name}-frontend-cpu-high"
   alarm_description   = "Frontend ECS service CPU is high"
   namespace           = "AWS/ECS"
   metric_name         = "CPUUtilization"
@@ -17,14 +17,12 @@ resource "aws_cloudwatch_metric_alarm" "frontend_cpu_high" {
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend-cpu-alarm"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-frontend-cpu-alarm"
   }
 }
 
 resource "aws_cloudwatch_metric_alarm" "backend_cpu_high" {
-  alarm_name          = "${var.project_name}-${var.environment}-backend-cpu-high"
+  alarm_name          = "${var.project_name}-backend-cpu-high"
   alarm_description   = "Backend ECS service CPU is high"
   namespace           = "AWS/ECS"
   metric_name         = "CPUUtilization"
@@ -42,8 +40,6 @@ resource "aws_cloudwatch_metric_alarm" "backend_cpu_high" {
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-backend-cpu-alarm"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-backend-cpu-alarm"
   }
 }

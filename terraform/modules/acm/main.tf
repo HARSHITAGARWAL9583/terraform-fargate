@@ -8,8 +8,6 @@ resource "aws_acm_certificate" "cert" {
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-acm-cert"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-acm-cert"
   }
 }

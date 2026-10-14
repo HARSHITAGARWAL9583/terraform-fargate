@@ -1,35 +1,24 @@
 variable "vpc_id" {
   description = "VPC ID where the NAT instance will be created"
-  type = string
+  type        = string
 }
-
-
-
 
 variable "public_subnet_id" {
   description = "Public subnet ID for the NAT instance"
-  type  = string
+  type        = string
 }
+
 variable "private_subnet_ids" {
-  description = "IDs of the privte subnets"
-  type = list(string)
+  description = "IDs of the private subnets"
+  type        = list(string)
 }
 
 variable "project_name" {
-  description = "Project_name"
-  type = string
+  description = "Project name"
+  type        = string
 }
-
-
-variable "environment" {
-  description = "Environment name"
-  type = string 
-}
-
 
 variable "private_subnet_cidrs" {
   description = "CIDR blocks of private subnets"
   type        = list(string)
 }
-
-

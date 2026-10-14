@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_task_execution" {
-  name = "${var.project_name}-${var.environment}-ecs-execution-role"
+  name = "${var.project_name}-ecs-execution-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -15,9 +15,7 @@ resource "aws_iam_role" "ecs_task_execution" {
   })
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-ecs-execution-role"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-ecs-execution-role"
   }
 }
 
@@ -27,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution" {
 }
 
 resource "aws_iam_role" "ecs_task" {
-  name = "${var.project_name}-${var.environment}-ecs-task-role"
+  name = "${var.project_name}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -43,9 +41,6 @@ resource "aws_iam_role" "ecs_task" {
   })
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-ecs-task-role"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-ecs-task-role"
   }
 }
-

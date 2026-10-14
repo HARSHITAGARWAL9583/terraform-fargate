@@ -1,5 +1,5 @@
 resource "aws_lb" "main" {
-  name               = "${var.project_name}-${var.environment}-alb"
+  name               = "${var.project_name}-alb"
   internal           = false
   load_balancer_type = "application"
 
@@ -8,19 +8,13 @@ resource "aws_lb" "main" {
   enable_deletion_protection = var.enable_deletion_protection
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-alb"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-alb"
   }
 }
 
-
-
-
-
 resource "aws_lb_target_group" "frontend" {
   name_prefix = "fe-"
-  port        = 80
+  port        = 3000
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
@@ -30,10 +24,7 @@ resource "aws_lb_target_group" "frontend" {
   }
 
   health_check {
-    enabled             = true
     path                = "/"
-    protocol            = "HTTP"
-    port                = "traffic-port"
     healthy_threshold   = 2
     unhealthy_threshold = 3
     interval            = 30
@@ -41,18 +32,13 @@ resource "aws_lb_target_group" "frontend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-${var.environment}-frontend"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Application = "frontend"
+    Name = "${var.project_name}-frontend-tg"
   }
 }
 
-
-
 resource "aws_lb_target_group" "backend" {
-  name        = "${var.project_name}-${var.environment}-backend"
-  port        = 5000
+  name        = "${var.project_name}-backend-tg"
+  port        = 1951
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
@@ -62,57 +48,41 @@ resource "aws_lb_target_group" "backend" {
   }
 
   health_check {
-    enabled = true
-    path = "/health"
-    protocol = "HTTP"
-    port = "traffic-port"
-    healthy_threshold = 2
+    path                = "/api/v1/user/health-check"
+    healthy_threshold   = 2
     unhealthy_threshold = 3
-    interval = 30
-    timeout = 5
-
+    interval            = 30
+    timeout             = 5
   }
-
 
   tags = {
-    Name = "${var.project_name}-${var.environment}-backend"
-    Environment = var.environment
-    Application = "backend"
-    ManagedBy = "terraform"
+    Name = "${var.project_name}-backend-tg"
   }
 }
 
+resource "aws_lb_listener" "frontend_http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 80
+  protocol          = "HTTP"
 
-
-
-resource "aws_lb_listener" "frontend_http" { //creates the ALB listener
-  load_balancer_arn = aws_lb.main.arn //attaches it to our ALB
-  port = 80 // listern for th http traffic
-  protocol = "HTTP" //traffic user http
-
-
-
-  default_action { //tells ALB what to do with requests
-    type = "forward" //forward the request 
-    target_group_arn = aws_lb_target_group.frontend.arn  //send it to the frontend target grp
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
   }
 }
-
-
 
 resource "aws_lb_listener_rule" "backend" {
-    listener_arn = aws_lb_listener.frontend_http.arn //user our port 80 ALB listerer
-    priority = 100 //determines rule evaluation order
+  listener_arn = aws_lb_listener.frontend_http.arn
+  priority     = 100
 
-    action {
-      type = "forward" //send the request to backend
-      target_group_arn = aws_lb_target_group.backend.arn // backend target grp
-    }
-  
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
 
   condition {
     path_pattern {
-      values = ["/api/*"] //match api requests
+      values = ["/api/*"]
     }
   }
 }

@@ -1,41 +1,33 @@
 resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr  //aws api call //vpc created on AWS
+  cidr_block = var.vpc_cidr
 
   tags = {
-    Name        = "${var.project_name}-vpc" //   ex- myapp-vpc
-    Environment = var.environment   // terraform-dev
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-vpc"
   }
 }
 
 resource "aws_subnet" "public" {
-  count = length(var.public_subnet_cidrs) // we have two public subnet cidr so 
+  count = length(var.public_subnet_cidrs)
 
-  vpc_id                  = aws_vpc.main.id   // Subnet ko VPC ke andar banana hai toh subnet ko pata hona chahiye ki mujhe kis VPC mein banana ha
-  cidr_block              = var.public_subnet_cidrs[count.index]   //because we creaate te two public subnet so  we need the   cide 10.10 karke  or matlab alag lag avaivable zone mai 
-  availability_zone       = var.availability_zones[count.index] //  do done hai  na toh dono mai alag alag cidr 
-  map_public_ip_on_launch = true //Jab bhi koi EC2 instance ya resource is public subnet mein launch hoga, AWS automatically usse ek public IP de dega
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = var.availability_zones[count.index]
+  map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.project_name}-public-${count.index + 1}" //  first wla ka  myapp-public-1 , myapp-public-2
-    Environment = var.environment //terraform dev
-    ManagedBy   = "terraform"
-    Tier        = "public"
+    Name = "${var.project_name}-public-${count.index + 1}"
   }
 }
 
 resource "aws_subnet" "private" {
-  count = length(var.private_subnet_cidrs) // we have two private subnet cidr 
+  count = length(var.private_subnet_cidrs)
 
-  vpc_id            = aws_vpc.main.id // Subnet ko VPC ke andar banana hai toh subnet ko pata hona chahiye ki mujhe kis VPC mein banana ha
+  vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidrs[count.index]
   availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name        = "${var.project_name}-private-${count.index + 1}"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Tier        = "private"
+    Name = "${var.project_name}-private-${count.index + 1}"
   }
 }
 
@@ -43,9 +35,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name        = "${var.project_name}-igw"
-    Environment = var.environment
-    ManagedBy   = "terraform"
+    Name = "${var.project_name}-igw"
   }
 }
 
@@ -54,10 +44,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name        = "${var.project_name}-public-rt"
-    Environment = var.environment
-    ManagedBy   = "terraform"
-    Tier        = "public"
+    Name = "${var.project_name}-public-rt"
   }
 }
 
