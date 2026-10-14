@@ -1,38 +1,31 @@
+# ─── 1. Networking (VPC & NAT) ────────────────────────────────────────────────
+
 module "vpc" {
   source       = "./terraform/modules/vpc"
-  vpc_cidr     = "10.0.0.0/16"
   project_name = var.project_name
+  vpc_cidr     = "10.0.0.0/16"
 
-  availability_zones = [
-    "ap-south-1a",
-    "ap-south-1b",
-  ]
-  public_subnet_cidrs = [
-    "10.0.1.0/24",
-    "10.0.2.0/24",
-  ]
-  private_subnet_cidrs = [
-    "10.0.3.0/24",
-    "10.0.4.0/24",
-  ]
+  availability_zones   = ["ap-south-1a", "ap-south-1b"]
+  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+  private_subnet_cidrs = ["10.0.3.0/24", "10.0.4.0/24"]
 }
 
 module "nat" {
   source = "./terraform/modules/nat"
 
+  project_name         = var.project_name
   vpc_id               = module.vpc.vpc_id
   public_subnet_id     = module.vpc.public_subnet_ids[0]
   private_subnet_ids   = module.vpc.private_subnet_ids
   private_subnet_cidrs = module.vpc.private_subnet_cidrs
-
-  project_name = var.project_name
 }
 
-module "security_groups" {
-  source = "./terraform/modules/security-groups"
+# ─── 2. Security & IAM ────────────────────────────────────────────────────────
 
-  vpc_id       = module.vpc.vpc_id
+module "security_groups" {
+  source       = "./terraform/modules/security-groups"
   project_name = var.project_name
+  vpc_id       = module.vpc.vpc_id
 }
 
 module "iam" {
@@ -40,39 +33,42 @@ module "iam" {
   project_name = var.project_name
 }
 
+# ─── 3. Container Registry (ECR) ──────────────────────────────────────────────
+
 module "ecr" {
   source       = "./terraform/modules/ecr"
   project_name = var.project_name
 }
 
-module "sns" {
-  source = "./terraform/modules/sns"
+# ─── 4. Notifications & SSL Certificate ───────────────────────────────────────
 
+module "sns" {
+  source             = "./terraform/modules/sns"
   project_name       = var.project_name
   notification_email = var.notification_email
 }
 
 module "acm" {
-  source = "./terraform/modules/acm"
-
+  source                    = "./terraform/modules/acm"
   project_name              = var.project_name
   domain_name               = var.domain_name
   subject_alternative_names = ["www.${var.domain_name}"]
 }
 
-module "alb" {
-  source = "./terraform/modules/alb"
+# ─── 5. Load Balancer (ALB) ───────────────────────────────────────────────────
 
+module "alb" {
+  source            = "./terraform/modules/alb"
+  project_name      = var.project_name
   vpc_id            = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
   security_group_id = module.security_groups.alb_security_group_id
-
-  project_name = var.project_name
 }
 
-module "ecs" {
-  source = "./terraform/modules/ecs"
+# ─── 6. ECS Fargate Cluster & Services ────────────────────────────────────────
 
+module "ecs" {
+  source       = "./terraform/modules/ecs"
   project_name = var.project_name
 
   # Networking
@@ -96,9 +92,10 @@ module "ecs" {
   backend_target_group_arn  = module.alb.backend_target_group_arn
 }
 
-module "autoscaling" {
-  source = "./terraform/modules/autoscaling"
+# ─── 7. Auto Scaling & Monitoring ─────────────────────────────────────────────
 
+module "autoscaling" {
+  source                = "./terraform/modules/autoscaling"
   project_name          = var.project_name
   ecs_cluster_name      = module.ecs.cluster_name
   frontend_service_name = module.ecs.frontend_service_name
@@ -109,8 +106,7 @@ module "autoscaling" {
 }
 
 module "cloudwatch" {
-  source = "./terraform/modules/cloudwatch"
-
+  source                = "./terraform/modules/cloudwatch"
   project_name          = var.project_name
   ecs_cluster_name      = module.ecs.cluster_name
   frontend_service_name = module.ecs.frontend_service_name

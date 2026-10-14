@@ -5,7 +5,7 @@ variable "vpc_cidr" { // recivees 10.10...... okay
 
 variable "project_name" {
   description = "project name"
-  type = string
+  type        = string
 }
 
 

@@ -19,5 +19,5 @@ output "frontend_target_group_arn" {
 
 output "backend_target_group_arn" {
   description = "ARN of the backend target group"
-  value = aws_lb_target_group.backend.arn
+  value       = aws_lb_target_group.backend.arn
 }
