@@ -10,10 +10,16 @@ variable "project_name" {
   default     = "superarea"
 }
 
+variable "environment" {
+  description = "Deployment environment (e.g. dev, staging, prod)"
+  type        = string
+  default     = "prod"
+}
+
 variable "notification_email" {
   description = "Email address to receive CloudWatch alarm / SNS notifications"
   type        = string
-  default     = "harshit.a@moondviec.co"
+  default     = "admin@superarea.ai"
 }
 
 variable "domain_name" {

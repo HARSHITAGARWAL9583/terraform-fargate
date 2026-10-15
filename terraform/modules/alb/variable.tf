@@ -18,6 +18,11 @@ variable "project_name" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
 variable "enable_deletion_protection" {
   description = "Enable deletion protection on the ALB to prevent accidental deletion"
   type        = bool

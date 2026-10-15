@@ -17,7 +17,8 @@ resource "aws_cloudwatch_metric_alarm" "frontend_cpu_high" {
   }
 
   tags = {
-    Name = "${var.project_name}-frontend-cpu-alarm"
+    Name        = "${var.project_name}-frontend-cpu-alarm"
+    Environment = var.environment
   }
 }
 
@@ -40,6 +41,7 @@ resource "aws_cloudwatch_metric_alarm" "backend_cpu_high" {
   }
 
   tags = {
-    Name = "${var.project_name}-backend-cpu-alarm"
+    Name        = "${var.project_name}-backend-cpu-alarm"
+    Environment = var.environment
   }
 }

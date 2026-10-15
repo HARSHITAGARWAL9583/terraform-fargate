@@ -2,7 +2,8 @@ resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-cluster"
 
   tags = {
-    Name = "${var.project_name}-cluster"
+    Name        = "${var.project_name}-cluster"
+    Environment = var.environment
   }
 }
 
@@ -45,7 +46,8 @@ resource "aws_ecs_task_definition" "frontend" {
   depends_on = [aws_cloudwatch_log_group.frontend]
 
   tags = {
-    Name = "${var.project_name}-frontend"
+    Name        = "${var.project_name}-frontend"
+    Environment = var.environment
   }
 }
 
@@ -99,7 +101,8 @@ resource "aws_ecs_task_definition" "backend" {
   depends_on = [aws_cloudwatch_log_group.backend]
 
   tags = {
-    Name = "${var.project_name}-backend-task"
+    Name        = "${var.project_name}-backend-task"
+    Environment = var.environment
   }
 }
 
@@ -108,7 +111,8 @@ resource "aws_cloudwatch_log_group" "frontend" {
   retention_in_days = 30
 
   tags = {
-    Name = "${var.project_name}-frontend-logs"
+    Name        = "${var.project_name}-frontend-logs"
+    Environment = var.environment
   }
 }
 
@@ -117,7 +121,8 @@ resource "aws_cloudwatch_log_group" "backend" {
   retention_in_days = 30
 
   tags = {
-    Name = "${var.project_name}-backend-logs"
+    Name        = "${var.project_name}-backend-logs"
+    Environment = var.environment
   }
 }
 
@@ -142,7 +147,8 @@ resource "aws_ecs_service" "frontend" {
   }
 
   tags = {
-    Name = "${var.project_name}-frontend-service"
+    Name        = "${var.project_name}-frontend-service"
+    Environment = var.environment
   }
 }
 
@@ -167,6 +173,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   tags = {
-    Name = "${var.project_name}-backend-service"
+    Name        = "${var.project_name}-backend-service"
+    Environment = var.environment
   }
 }

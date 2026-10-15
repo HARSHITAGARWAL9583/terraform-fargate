@@ -3,6 +3,10 @@ variable "project_name" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
 
 variable "vpc_id" {
   description = "VPC ID for ECS networking"
@@ -53,4 +57,3 @@ variable "backend_target_group_arn" {
   description = "ARN of the backend ALB target group"
   type        = string
 }
-
