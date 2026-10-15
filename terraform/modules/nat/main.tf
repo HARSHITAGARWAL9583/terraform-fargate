@@ -32,7 +32,8 @@ resource "aws_security_group" "nat" {
   }
 
   tags = {
-    Name = "${var.project_name}-nat-sg"
+    Name        = "${var.project_name}-nat-sg"
+    Environment = var.environment
   }
 }
 
@@ -72,7 +73,8 @@ resource "aws_instance" "nat" {
   EOF
 
   tags = {
-    Name = "${var.project_name}-nat-instance"
+    Name        = "${var.project_name}-nat-instance"
+    Environment = var.environment
   }
 }
 
@@ -81,7 +83,8 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name = "${var.project_name}-nat-eip"
+    Name        = "${var.project_name}-nat-eip"
+    Environment = var.environment
   }
 }
 
@@ -95,7 +98,8 @@ resource "aws_route_table" "private" {
   vpc_id = var.vpc_id
 
   tags = {
-    Name = "${var.project_name}-private-rt"
+    Name        = "${var.project_name}-private-rt"
+    Environment = var.environment
   }
 }
 
