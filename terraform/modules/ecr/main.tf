@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "frontend" {
-  name                 = "${var.project_name}-frontend"
+  name                 = "${var.project_name}-${var.environment}-frontend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -7,14 +7,14 @@ resource "aws_ecr_repository" "frontend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-frontend"
+    Name        = "${var.project_name}-${var.environment}-frontend"
     Environment = var.environment
     Application = "frontend"
   }
 }
 
 resource "aws_ecr_repository" "backend" {
-  name                 = "${var.project_name}-backend"
+  name                 = "${var.project_name}-${var.environment}-backend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -22,7 +22,7 @@ resource "aws_ecr_repository" "backend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-backend"
+    Name        = "${var.project_name}-${var.environment}-backend"
     Environment = var.environment
     Application = "backend"
   }

@@ -1,3 +1,13 @@
+# terraform {
+#   backend "s3" {
+#     bucket  = "superarea-prod-state-s3"
+#     key     = "prod/terraform.tfstate"
+#     region  = "ap-south-1"
+#     encrypt = true
+#   }
+# }
+
+
 # ─── 1. Networking (VPC & NAT) ────────────────────────────────────────────────
 
 module "vpc" {
@@ -124,3 +134,12 @@ module "cloudwatch" {
   backend_service_name  = module.ecs.backend_service_name
   sns_topic_arn         = module.sns.sns_topic_arn
 }
+
+# ─── 8. Remote State Storage (S3 & DynamoDB) ──────────────────────────────────
+
+module "state_s3" {
+  source       = "./terraform/modules/state-s3"
+  project_name = var.project_name
+  environment  = var.environment
+}
+

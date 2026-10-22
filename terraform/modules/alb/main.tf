@@ -1,5 +1,5 @@
 resource "aws_lb" "main" {
-  name               = "${var.project_name}-alb"
+  name               = "${var.project_name}-${var.environment}-alb"
   internal           = false
   load_balancer_type = "application"
 
@@ -8,7 +8,7 @@ resource "aws_lb" "main" {
   enable_deletion_protection = var.enable_deletion_protection
 
   tags = {
-    Name        = "${var.project_name}-alb"
+    Name        = "${var.project_name}-${var.environment}-alb"
     Environment = var.environment
   }
 }
@@ -33,13 +33,13 @@ resource "aws_lb_target_group" "frontend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-frontend-tg"
+    Name        = "${var.project_name}-${var.environment}-frontend-tg"
     Environment = var.environment
   }
 }
 
 resource "aws_lb_target_group" "backend" {
-  name        = "${var.project_name}-backend-tg"
+  name        = "${var.project_name}-${var.environment}-backend-tg"
   port        = 1951
   protocol    = "HTTP"
   target_type = "ip"
@@ -58,7 +58,7 @@ resource "aws_lb_target_group" "backend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-backend-tg"
+    Name        = "${var.project_name}-${var.environment}-backend-tg"
     Environment = var.environment
   }
 }

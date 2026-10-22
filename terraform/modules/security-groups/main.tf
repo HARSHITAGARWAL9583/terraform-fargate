@@ -1,5 +1,5 @@
 resource "aws_security_group" "alb" {
-  name        = "${var.project_name}-alb-sg"
+  name        = "${var.project_name}-${var.environment}-alb-sg"
   description = "Security group for Application Load Balancer"
   vpc_id      = var.vpc_id
 
@@ -20,13 +20,13 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name        = "${var.project_name}-alb-sg"
+    Name        = "${var.project_name}-${var.environment}-alb-sg"
     Environment = var.environment
   }
 }
 
 resource "aws_security_group" "frontend" {
-  name        = "${var.project_name}-frontend-sg"
+  name        = "${var.project_name}-${var.environment}-frontend-sg"
   description = "Security group for frontend ECS service"
   vpc_id      = var.vpc_id
 
@@ -47,13 +47,13 @@ resource "aws_security_group" "frontend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-frontend-sg"
+    Name        = "${var.project_name}-${var.environment}-frontend-sg"
     Environment = var.environment
   }
 }
 
 resource "aws_security_group" "backend" {
-  name        = "${var.project_name}-backend-sg"
+  name        = "${var.project_name}-${var.environment}-backend-sg"
   description = "Security group for backend ECS service"
   vpc_id      = var.vpc_id
 
@@ -82,7 +82,7 @@ resource "aws_security_group" "backend" {
   }
 
   tags = {
-    Name        = "${var.project_name}-backend-sg"
+    Name        = "${var.project_name}-${var.environment}-backend-sg"
     Environment = var.environment
   }
 }

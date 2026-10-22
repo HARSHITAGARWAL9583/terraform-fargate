@@ -60,4 +60,13 @@ output "acm_dns_validation_records" {
   value       = module.acm.dns_validation_records
 }
 
+# ─── Remote State Storage ─────────────────────────────────────────────────────
+
+output "state_s3_bucket" {
+  description = "S3 bucket name storing Terraform state"
+  value       = module.state_s3.bucket_name
+}
+
+
+
 
