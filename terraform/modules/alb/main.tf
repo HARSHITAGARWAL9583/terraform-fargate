@@ -14,7 +14,7 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "frontend" {
-  name_prefix = "fe-"
+  name        = "${var.project_name}-${var.environment}-frontend-tg"
   port        = 3000
   protocol    = "HTTP"
   target_type = "ip"

@@ -11,7 +11,6 @@ resource "aws_s3_bucket" "state" {
   }
 }
 
-
 resource "aws_s3_bucket_versioning" "state" {
   bucket = aws_s3_bucket.state.id
 
@@ -38,4 +37,3 @@ resource "aws_s3_bucket_public_access_block" "state" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
-
